@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vote Paele — Voter Contact Progress</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✊</text></svg>">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=DM+Sans:wght@300;400;500;600;700&family=Fraunces:ital,opsz,wght,SOFT@0,9..144,500..900,100;1,9..144,500..900,100&family=JetBrains+Mono:wght@300;400;500&display=swap');
+
+:root {
+  --bg: #FCEEDC;
+  --surface: #FFF8EE;
+  --surface-2: #F4E2C9;
+  --border: #D9BF95;
+  --text: #2A3415;
+  --text-secondary: #4A4520;
+  --text-dim: #6B6038;
+  --accent: #B8542A;
+  --accent-deep: #7A3818;
+  --door: #4A5520;
+  --door-soft: rgba(74, 85, 32, 0.14);
+  --phone: #B8542A;
+  --phone-soft: rgba(184, 84, 42, 0.14);
+  --ahead: #4A5520;
+  --behind: #9C2D1A;
+  --radius: 14px;
+  --radius-sm: 8px;
+  --font: 'DM Sans', -apple-system, sans-serif;
+  --font-display: 'Fraunces', 'Times New Roman', serif;
+  --font-head: 'Anton', 'Impact', sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 15px;
+  line-height: 1.4;
+  -webkit-font-smoothing: antialiased;
+}
+
+.app {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 28px 32px 40px;
+}
+
+/* ============ HEADER ============ */
+.header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  padding-bottom: 18px;
+  border-bottom: 2px solid var(--border);
+  margin-bottom: 28px;
+}
+.header-left h1 {
+  font-family: var(--font-head);
+  font-size: 56px;
+  line-height: 0.95;
+  color: var(--accent);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.header-left .subtitle {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 22px;
+  color: var(--text-secondary);
+  margin-top: 6px;
+}
+.header-right {
+  text-align: right;
+  font-size: 13px;
+  color: var(--text-dim);
+}
+.header-right .updated {
+  font-family: var(--mono);
+  font-size: 12px;
+  margin-bottom: 4px;
+}
+.header-right .refresh {
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+/* ============ GRANULARITY TOGGLE ============ */
+.granularity-bar {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 28px;
+}
+.granularity-btn {
+  font-family: var(--font);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  padding: 9px 22px;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.granularity-btn:hover { background: var(--surface-2); }
+.granularity-btn.active {
+  background: var(--accent);
+  color: var(--surface);
+  border-color: var(--accent);
+}
+
+/* ============ PHASE CARDS ============ */
+.cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+.card {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.card-header {
+  padding: 18px 24px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+}
+.card-channel {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.channel-pill {
+  font-family: var(--font);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 4px 9px;
+  border-radius: 4px;
+}
+.card[data-channel="door"]  .channel-pill { background: var(--door);  color: var(--surface); }
+.card[data-channel="phone"] .channel-pill { background: var(--phone); color: var(--surface); }
+.card-phase-name {
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  letter-spacing: 0.3px;
+}
+.card-window {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text-dim);
+}
+
+.card-body {
+  padding: 28px 24px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.headline {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+}
+.count-block { display: flex; align-items: baseline; gap: 14px; }
+.count-num {
+  font-family: var(--font-head);
+  font-size: 86px;
+  line-height: 0.88;
+  letter-spacing: 0.5px;
+}
+.count-divider {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 36px;
+  color: var(--text-dim);
+}
+.count-goal {
+  font-family: var(--font-head);
+  font-size: 46px;
+  line-height: 0.95;
+  color: var(--text-dim);
+  letter-spacing: 0.5px;
+}
+.card[data-channel="door"]  .count-num { color: var(--door); }
+.card[data-channel="phone"] .count-num { color: var(--phone); }
+
+.pct-block {
+  text-align: right;
+}
+.pct-num {
+  font-family: var(--font-head);
+  font-size: 50px;
+  line-height: 0.95;
+  color: var(--text);
+  letter-spacing: 0.5px;
+}
+.pct-label {
+  font-family: var(--font);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-top: 3px;
+}
+
+/* ============ PROGRESS BAR ============ */
+.progress {
+  position: relative;
+  height: 18px;
+  background: var(--surface-2);
+  border-radius: 9px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+.progress-fill {
+  position: absolute;
+  inset: 0;
+  border-radius: 9px;
+  transition: width 0.5s ease;
+}
+.card[data-channel="door"]  .progress-fill { background: var(--door); }
+.card[data-channel="phone"] .progress-fill { background: var(--phone); }
+.progress-marker {
+  position: absolute;
+  top: -2px;
+  bottom: -2px;
+  width: 2px;
+  background: var(--text-secondary);
+  opacity: 0.55;
+}
+.progress-marker::after {
+  content: 'on-pace';
+  position: absolute;
+  top: -16px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.5px;
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+
+/* ============ PACE LINE ============ */
+.pace-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+}
+.pace-text { color: var(--text-secondary); }
+.pace-badge {
+  font-family: var(--font);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 4px;
+}
+.pace-badge.ahead    { background: var(--door-soft);  color: var(--door); }
+.pace-badge.on-pace  { background: var(--surface-2);  color: var(--text-secondary); }
+.pace-badge.behind   { background: rgba(156, 45, 26, 0.14); color: var(--behind); }
+
+/* ============ DETAILS GRID ============ */
+.details {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  padding-top: 18px;
+  border-top: 1px dashed var(--border);
+}
+.detail {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.detail-label {
+  font-family: var(--font);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+.detail-value {
+  font-family: var(--mono);
+  font-size: 15px;
+  color: var(--text);
+  font-weight: 500;
+}
+
+/* ============ FOOTER ============ */
+.footer {
+  margin-top: 32px;
+  padding-top: 18px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text-dim);
+}
+
+@media (max-width: 900px) {
+  .cards { grid-template-columns: 1fr; }
+  .header { flex-direction: column; align-items: flex-start; }
+  .header-right { text-align: left; }
+  .header-left h1 { font-size: 44px; }
+  .count-num { font-size: 64px; }
+  .count-goal { font-size: 32px; }
+  .pct-num { font-size: 38px; }
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="header">
+    <div class="header-left">
+      <h1>Vote Paele</h1>
+      <div class="subtitle">voter contact progress</div>
+    </div>
+    <div class="header-right">
+      <div class="updated" id="last-updated">loading…</div>
+      <div class="refresh">auto-refresh · 30 min</div>
+    </div>
+  </header>
+
+  <div class="granularity-bar" role="tablist">
+    <button class="granularity-btn" data-grain="week">This Week</button>
+    <button class="granularity-btn" data-grain="month">This Month</button>
+    <button class="granularity-btn active" data-grain="total">Phase Total</button>
+  </div>
+
+  <div class="cards" id="cards"></div>
+
+  <footer class="footer">
+    <div>Source · Solidarity Tech · auto-pull every 30 min</div>
+    <div id="footer-meta"></div>
+  </footer>
+</div>
+
+<script>
+const STATE = {
+  grain: 'total',
+  data: null,
+};
+
+const fmt = (n) => Number(n).toLocaleString('en-US');
+
+function paceVerdict(actual, expected) {
+  if (!expected) return { label: 'starting', cls: 'on-pace' };
+  const ratio = actual / expected;
+  if (ratio >= 1.1) return { label: 'ahead of pace', cls: 'ahead' };
+  if (ratio >= 0.9) return { label: 'on pace',      cls: 'on-pace' };
+  return                  { label: 'behind pace',   cls: 'behind' };
+}
+
+function elapsedFractionFor(phase) {
+  const start = new Date(phase.start + 'T00:00:00');
+  const end   = new Date(phase.end   + 'T00:00:00');
+  const now   = new Date();
+  const total = (end - start) / (1000 * 60 * 60 * 24) + 1;
+  const elapsed = Math.max(0, (now - start) / (1000 * 60 * 60 * 24) + 1);
+  return { total, elapsed: Math.min(total, elapsed) };
+}
+
+function pickGoal(phase, grain) {
+  if (grain === 'week')  return phase.weekly_goal;
+  if (grain === 'month') return phase.monthly_goal;
+  return phase.total_goal;
+}
+
+function pickPeriodCount(phase, grain) {
+  if (grain === 'week')  return phase.count_week  ?? phase.count;
+  if (grain === 'month') return phase.count_month ?? phase.count;
+  return phase.count;
+}
+
+function pickPeriodLabel(phase, grain) {
+  if (grain === 'week'  && phase.week_window)  return `${phase.week_window[0]} → ${phase.week_window[1]}`;
+  if (grain === 'month' && phase.month_window) return `${phase.month_window[0]} → ${phase.month_window[1]}`;
+  return `${phase.start} → ${phase.end}`;
+}
+
+function renderCard(phase) {
+  const grain = STATE.grain;
+  const goal = pickGoal(phase, grain);
+  const count = pickPeriodCount(phase, grain);
+  const pct = goal ? Math.min(100, (count / goal) * 100) : 0;
+  const fill = Math.min(100, pct);
+
+  // pace marker
+  const { total: totalDays, elapsed: elapsedDays } = elapsedFractionFor(phase);
+  const expectedPct = totalDays ? (elapsedDays / totalDays) * 100 : 0;
+  const expectedAbs = Math.round(phase.daily_goal * elapsedDays);
+
+  const verdict = paceVerdict(phase.count, expectedAbs);
+
+  const grainLabel =
+    grain === 'week'  ? 'of weekly target' :
+    grain === 'month' ? 'of monthly target' :
+                        'of phase total';
+
+  const windowStr = pickPeriodLabel(phase, grain);
+  const periodLabel =
+    grain === 'week'  ? 'week' :
+    grain === 'month' ? 'month' : 'phase';
+
+  // pace text changes per grain
+  const paceText =
+    grain === 'total' ? `${fmt(expectedAbs)} expected by today · ${fmt(phase.count)} logged`
+    : grain === 'week' ? `target ${fmt(goal)}/wk · ${fmt(count)} this week`
+    :                    `target ${fmt(goal)}/mo · ${fmt(count)} this month`;
+
+  return `
+    <div class="card" data-channel="${phase.channel}">
+      <div class="card-header">
+        <div class="card-channel">
+          <span class="channel-pill">${phase.channel}</span>
+          <span class="card-phase-name">${phase.name}</span>
+        </div>
+        <div class="card-window">${windowStr}</div>
+      </div>
+      <div class="card-body">
+        <div class="headline">
+          <div class="count-block">
+            <span class="count-num">${fmt(count)}</span>
+            <span class="count-divider">/</span>
+            <span class="count-goal">${fmt(goal)}</span>
+          </div>
+          <div class="pct-block">
+            <div class="pct-num">${pct.toFixed(1)}%</div>
+            <div class="pct-label">${grainLabel}</div>
+          </div>
+        </div>
+
+        <div class="progress">
+          <div class="progress-fill" style="width:${fill}%"></div>
+          ${grain === 'total' ? `<div class="progress-marker" style="left:${expectedPct}%"></div>` : ''}
+        </div>
+
+        <div class="pace-line">
+          <span class="pace-text">${paceText}</span>
+          <span class="pace-badge ${verdict.cls}">${verdict.label}</span>
+        </div>
+
+        <div class="details">
+          <div class="detail">
+            <div class="detail-label">Universe</div>
+            <div class="detail-value">${fmt(phase.universe)}</div>
+          </div>
+          <div class="detail">
+            <div class="detail-label">Per Day</div>
+            <div class="detail-value">${phase.daily_goal}</div>
+          </div>
+          <div class="detail">
+            <div class="detail-label">Per Week</div>
+            <div class="detail-value">${fmt(phase.weekly_goal)}</div>
+          </div>
+          <div class="detail">
+            <div class="detail-label">Days Left</div>
+            <div class="detail-value">${Math.max(0, phase.days_total - phase.days_elapsed)}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function render() {
+  if (!STATE.data) return;
+  const cards = document.getElementById('cards');
+  cards.innerHTML = STATE.data.phases.map(renderCard).join('');
+
+  const ts = new Date(STATE.data.generated_at);
+  const ago = Math.floor((Date.now() - ts.getTime()) / 60000);
+  document.getElementById('last-updated').textContent =
+    ago < 1 ? 'updated just now'
+            : `updated ${ago} min ago`;
+  document.getElementById('footer-meta').textContent =
+    `${STATE.data.phases.length} active phase${STATE.data.phases.length === 1 ? '' : 's'} · generated ${ts.toISOString().replace('T',' ').slice(0,16)} UTC`;
+}
+
+async function loadData() {
+  try {
+    const r = await fetch(`progress.json?t=${Date.now()}`, { cache: 'no-store' });
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    STATE.data = await r.json();
+    render();
+  } catch (e) {
+    document.getElementById('cards').innerHTML =
+      `<div style="grid-column:1/-1;padding:40px;text-align:center;color:var(--behind);font-family:var(--mono)">
+         Failed to load progress.json — ${e.message}
+       </div>`;
+  }
+}
+
+document.querySelectorAll('.granularity-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.granularity-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    STATE.grain = btn.dataset.grain;
+    render();
+  });
+});
+
+loadData();
+setInterval(loadData, 30 * 60 * 1000);
+// Also tick the "updated X min ago" every minute
+setInterval(() => { if (STATE.data) render(); }, 60 * 1000);
+</script>
+</body>
+</html>

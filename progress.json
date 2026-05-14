@@ -1,0 +1,64 @@
+{
+  "generated_at": "2026-05-13T12:52:36.032944+00:00",
+  "campaign": "Vote Paele",
+  "phases": [
+    {
+      "id": "ph_moywoyi4060e",
+      "name": "PAELE-SUPER-VTR",
+      "channel": "door",
+      "universe": 1812,
+      "passes": 1,
+      "start": "2026-05-11",
+      "end": "2026-07-21",
+      "count": 0,
+      "count_week": 0,
+      "count_month": 0,
+      "total_goal": 1812,
+      "weekly_goal": 176,
+      "monthly_goal": 755,
+      "daily_goal": 25.2,
+      "days_total": 72,
+      "days_elapsed": 3,
+      "week_window": [
+        "2026-05-11",
+        "2026-05-17"
+      ],
+      "month_window": [
+        "2026-05-11",
+        "2026-05-31"
+      ],
+      "pct_total": 0.0,
+      "expected_to_date": 76,
+      "on_pace_pct": 0.0
+    },
+    {
+      "id": "ph_moywqwn6w5uu",
+      "name": "L\u0100HUI-REGULAR-PPL",
+      "channel": "phone",
+      "universe": 8489,
+      "passes": 1,
+      "start": "2026-05-11",
+      "end": "2026-07-21",
+      "count": 0,
+      "count_week": 0,
+      "count_month": 0,
+      "total_goal": 8489,
+      "weekly_goal": 825,
+      "monthly_goal": 3537,
+      "daily_goal": 117.9,
+      "days_total": 72,
+      "days_elapsed": 3,
+      "week_window": [
+        "2026-05-11",
+        "2026-05-17"
+      ],
+      "month_window": [
+        "2026-05-11",
+        "2026-05-31"
+      ],
+      "pct_total": 0.0,
+      "expected_to_date": 354,
+      "on_pace_pct": 0.0
+    }
+  ]
+}
