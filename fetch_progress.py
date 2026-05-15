@@ -21,7 +21,13 @@ from dotenv import load_dotenv
 
 ROOT = Path(__file__).resolve().parent
 sys.stdout.reconfigure(encoding='utf-8')
-load_dotenv(r"C:\Firefly's Path\.env")
+# Prefer .env next to this script (droplet has a symlink → /root/fireflys-path/.env);
+# fall back to the canonical Windows project path for local dev.
+local_env = ROOT / ".env"
+if local_env.exists():
+    load_dotenv(local_env)
+else:
+    load_dotenv(r"C:\Firefly's Path\.env")
 
 ST_BASE = "https://api.solidarity.tech/v1"
 ST_API_KEY = os.environ["ST_API_KEY"]
