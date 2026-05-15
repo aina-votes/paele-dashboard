@@ -21,9 +21,19 @@ if [ ! -d "$REPO_DIR/.git" ]; then
 fi
 
 cd "$REPO_DIR"
+git pull --rebase origin main >/dev/null 2>&1 || true
 ln -sf "$ENV_SRC" .env
 
-python3 -m pip install --quiet requests python-dotenv
+# Ubuntu 24.04 is PEP 668 / externally-managed — prefer apt; pip is the fallback
+if ! python3 -c "import requests, dotenv" 2>/dev/null; then
+  apt-get update -qq
+  apt-get install -y python3-requests python3-dotenv >/dev/null
+fi
+# verify
+python3 -c "import requests, dotenv" || {
+  echo "FATAL: requests/dotenv still missing after apt install" >&2
+  exit 1
+}
 
 git config user.email "sampeck2550@gmail.com"
 git config user.name  "Sam Peck"
