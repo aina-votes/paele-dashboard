@@ -148,29 +148,30 @@ def fetch_recent_user_updates(since_ts: int):
     return rows
 
 
-def parse_canvass_date(lcd):
-    if not lcd:
-        return None
-    if isinstance(lcd, list) and lcd:
-        lcd = lcd[0]
-    if isinstance(lcd, dict):
-        lcd = lcd.get("value") or lcd.get("label")
-    if not isinstance(lcd, str):
-        return None
-    try:
-        return datetime.fromisoformat(lcd[:10]).date()
-    except (ValueError, TypeError):
-        return None
+DOOR_TAG_PREFIX = "canvassed in canvass"  # matches "canvassed in Canvass <Name>"
+
+
+def has_canvass_tag(user) -> bool:
+    """A user is 'canvassed' if any of their tags starts with the canvass prefix."""
+    for t in (user.get("tags") or []):
+        name = t.get("name") if isinstance(t, dict) else str(t)
+        if name and name.lower().startswith(DOOR_TAG_PREFIX):
+            return True
+    return False
 
 
 def door_dates(users, since_date: date):
-    out = []
-    for u in users:
-        cup = u.get("custom_user_properties") or {}
-        d = parse_canvass_date(cup.get("last-canvass-date"))
-        if d and d >= since_date:
-            out.append(d)
-    return out
+    """
+    Return a synthetic-date list with one entry per canvassed user.
+
+    NOTE: ST tags carry no timestamp. We can't tell when each tag was applied,
+    so all canvassed users are counted as 'in this phase' (the dashboard sums
+    them against the phase total). Weekly / monthly buckets will equal total
+    until a date-bearing signal becomes available. Use 'today' as a sentinel
+    date so they land in the current window.
+    """
+    today = datetime.now(HST).date()
+    return [today for u in users if has_canvass_tag(u)]
 
 
 def call_dates(calls):
