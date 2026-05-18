@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-17T01:30:01.623376+00:00",
+  "generated_at": "2026-05-18T00:00:03.042313+00:00",
   "campaign": "Vote Paele",
   "phases": [
     {
@@ -19,7 +19,7 @@
       "monthly_goal": 755,
       "daily_goal": 25.2,
       "days_total": 72,
-      "days_elapsed": 6,
+      "days_elapsed": 7,
       "week_window": [
         "2026-05-11",
         "2026-05-17"
@@ -29,8 +29,8 @@
         "2026-05-31"
       ],
       "pct_total": 3.1,
-      "expected_to_date": 151,
-      "on_pace_pct": 37.1
+      "expected_to_date": 176,
+      "on_pace_pct": 31.8
     },
     {
       "id": "ph_moywqwn6w5uu",
@@ -48,7 +48,7 @@
       "monthly_goal": 3537,
       "daily_goal": 117.9,
       "days_total": 72,
-      "days_elapsed": 6,
+      "days_elapsed": 7,
       "week_window": [
         "2026-05-11",
         "2026-05-17"
@@ -58,8 +58,8 @@
         "2026-05-31"
       ],
       "pct_total": 0.0,
-      "expected_to_date": 707,
-      "on_pace_pct": 0.3
+      "expected_to_date": 825,
+      "on_pace_pct": 0.2
     }
   ]
 }
